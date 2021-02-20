@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         )
+
         super.onCreate(savedInstanceState)
         window.decorView.setOnTouchListener(object : OnSwipeTouchListener(this@MainActivity) {
             override fun onSwipeDown() {
