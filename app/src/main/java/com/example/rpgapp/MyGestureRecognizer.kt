@@ -1,9 +1,14 @@
 package com.example.rpgapp
 
 import android.content.Context
+import android.os.Build
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import kotlin.math.abs
 
 
@@ -14,7 +19,7 @@ interface IGestureView {
     fun onSwipeRight()
 }
 
-open class OnSwipeTouchListener(ctx:Context) : View.OnTouchListener, IGestureView {
+open class OnSwipeTouchListener(private val ctx:Context, val tts: TextToSpeech) : View.OnTouchListener, IGestureView {
     private val gestureDetector: GestureDetector = GestureDetector(ctx, MyGestureRecognizer(this))
 
     override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
@@ -22,19 +27,30 @@ open class OnSwipeTouchListener(ctx:Context) : View.OnTouchListener, IGestureVie
     }
 
     override fun onSwipeDown() {
-        TODO("Not yet implemented")
+        Toast.makeText(ctx, "User swiped down!",
+            Toast.LENGTH_LONG).show();
+        tts.speak("User swiped down!", TextToSpeech.QUEUE_ADD, null, "")
     }
 
     override fun onSwipeUp() {
-        TODO("Not yet implemented")
+        Toast.makeText(ctx, "User swiped up!",
+            Toast.LENGTH_LONG).show();
+        tts.speak("User swiped up!", TextToSpeech.QUEUE_ADD, null, "")
     }
 
     override fun onSwipeLeft() {
-        TODO("Not yet implemented")
+        Toast.makeText(ctx, "User swiped left!",
+            Toast.LENGTH_LONG).show();
+        tts.speak("User swiped left!", TextToSpeech.QUEUE_ADD, null, "")
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onSwipeRight() {
-        TODO("Not yet implemented")
+        Toast.makeText(
+            ctx, "User swiped right!",
+            Toast.LENGTH_LONG
+        ).show();
+        tts.speak("User swiped right!", TextToSpeech.QUEUE_ADD, null, "")
     }
 
 }
