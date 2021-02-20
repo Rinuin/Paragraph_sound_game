@@ -9,7 +9,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.nio.charset.Charset
 import kotlin.math.abs
+import kotlin.system.exitProcess
 
 
 interface IGestureView {
@@ -19,38 +23,242 @@ interface IGestureView {
     fun onSwipeRight()
 }
 
-open class OnSwipeTouchListener(private val ctx:Context, val tts: TextToSpeech) : View.OnTouchListener, IGestureView {
+open class OnSwipeTouchListener(private val ctx: Context, val tts: TextToSpeech) :
+    View.OnTouchListener, IGestureView {
     private val gestureDetector: GestureDetector = GestureDetector(ctx, MyGestureRecognizer(this))
+    private val csvreader: CSVReader
+    private var firstTime: Boolean = true
+
+    init {
+        this.csvreader = CSVReader()
+        this.csvreader.readCsvFile(
+            BufferedReader(
+                InputStreamReader(
+                    ctx.resources.openRawResource(
+                        R.raw.game_story
+                    ), Charset.forName("UTF-8")
+                )
+            )
+        )
+//        tts.speak(this.csvreader.getBlockById(0)?.msg, TextToSpeech.QUEUE_ADD, null, "")
+    }
+
+    fun checkGameEnd(){
+        if(this.csvreader.currentChoice == 3){
+            tts.speak(
+                this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                TextToSpeech.QUEUE_FLUSH,
+                null,
+                ""
+            )
+            Thread.sleep(7000)
+            exitProcess(0)
+        }
+    }
 
     override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
         return gestureDetector.onTouchEvent(p1);
     }
 
     override fun onSwipeDown() {
-        Toast.makeText(ctx, "User swiped down!",
-            Toast.LENGTH_LONG).show();
-        tts.speak("User swiped down!", TextToSpeech.QUEUE_ADD, null, "")
+        Toast.makeText(
+            ctx, "User swiped down!",
+            Toast.LENGTH_LONG
+        ).show();
+        if(this.firstTime){
+            tts.speak(
+                this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                TextToSpeech.QUEUE_ADD,
+                null,
+                ""
+            )
+            this.firstTime = false
+        }
+        else {
+            this.csvreader.saveChoice(this.csvreader.currentChoice?.let {
+                this.csvreader.getBlockById(
+                    it
+                )?.down
+            })
+            if(this.csvreader.currentChoice == -1) {
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+                this.csvreader.currentChoice = this.csvreader.previousChoice
+
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+            }
+            else{
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+            }
+            checkGameEnd()
+        }
     }
 
     override fun onSwipeUp() {
-        Toast.makeText(ctx, "User swiped up!",
-            Toast.LENGTH_LONG).show();
-        tts.speak("User swiped up!", TextToSpeech.QUEUE_ADD, null, "")
+        Toast.makeText(
+            ctx, "User swiped up!",
+            Toast.LENGTH_LONG
+        ).show();
+//        tts.speak("User swiped up!", TextToSpeech.QUEUE_ADD, null, "")
+        if(this.firstTime){
+            tts.speak(
+                this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                TextToSpeech.QUEUE_ADD,
+                null,
+                ""
+            )
+            this.firstTime = false
+        }
+        else {
+            this.csvreader.saveChoice(this.csvreader.currentChoice?.let {
+                this.csvreader.getBlockById(
+                    it
+                )?.up
+            })
+            if(this.csvreader.currentChoice == -1) {
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+                this.csvreader.currentChoice = this.csvreader.previousChoice
+
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+            }
+            else{
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+            }
+            checkGameEnd()
+        }
     }
 
     override fun onSwipeLeft() {
-        Toast.makeText(ctx, "User swiped left!",
-            Toast.LENGTH_LONG).show();
-        tts.speak("User swiped left!", TextToSpeech.QUEUE_ADD, null, "")
+        Toast.makeText(
+            ctx, "User swiped left!",
+            Toast.LENGTH_LONG
+        ).show();
+        if(this.firstTime){
+            tts.speak(
+                this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                TextToSpeech.QUEUE_ADD,
+                null,
+                ""
+            )
+            this.firstTime = false
+        }
+        else {
+            this.csvreader.saveChoice(this.csvreader.currentChoice?.let {
+                this.csvreader.getBlockById(
+                    it
+                )?.left
+            })
+            if(this.csvreader.currentChoice == -1) {
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+                this.csvreader.currentChoice = this.csvreader.previousChoice
+
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+            }
+            else{
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+            }
+            checkGameEnd()
+        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onSwipeRight() {
         Toast.makeText(
             ctx, "User swiped right!",
             Toast.LENGTH_LONG
         ).show();
-        tts.speak("User swiped right!", TextToSpeech.QUEUE_ADD, null, "")
+        if(this.firstTime){
+            tts.speak(
+                this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                TextToSpeech.QUEUE_ADD,
+                null,
+                ""
+            )
+            this.firstTime = false
+        }
+        else {
+            this.csvreader.saveChoice(this.csvreader.currentChoice?.let {
+                this.csvreader.getBlockById(
+                    it
+                )?.right
+            })
+            if(this.csvreader.currentChoice == -1) {
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+                this.csvreader.currentChoice = this.csvreader.previousChoice
+
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+
+            }
+            else{
+                tts.speak(
+                    this.csvreader.currentChoice?.let { this.csvreader.getBlockById(it)?.msg },
+                    TextToSpeech.QUEUE_ADD,
+                    null,
+                    ""
+                )
+            }
+            checkGameEnd()
+        }
     }
 
 }

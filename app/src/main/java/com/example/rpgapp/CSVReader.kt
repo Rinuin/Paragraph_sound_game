@@ -4,6 +4,8 @@ import java.io.BufferedReader
 
 class CSVReader() {
     var blockList = mutableListOf<Block>()
+    var currentChoice:Int? = 0
+    var previousChoice:Int? = 0
 
 
     fun readCsvFile(bf: BufferedReader) {
@@ -33,10 +35,9 @@ class CSVReader() {
         return this.blockList.find{it.id == id}
     }
 
-    fun printBlocks() {
-        for(b in blockList){
-            b.printValues()
-        }
+    fun saveChoice(id: Int?){
+        this.previousChoice = this.currentChoice
+        this.currentChoice = id
     }
 
 }
